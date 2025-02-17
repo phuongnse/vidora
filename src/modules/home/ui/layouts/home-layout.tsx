@@ -1,10 +1,10 @@
-import React from "react";
+import { ReactNode } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { HomeNavbar } from "../components/home-navbar";
 import { HomeSidebar } from "../components/home-sidebar";
 
 interface HomeLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const HomeLayout = ({ children }: HomeLayoutProps) => {

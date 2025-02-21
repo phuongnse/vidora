@@ -11,11 +11,12 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import { useEffect, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 interface FilterCarouselProps {
   value?: string | null;
   isLoading?: boolean;
-  onSelect?: (value: string | null) => void;
+  onSelect: (value: string | null) => void;
   data: {
     value: string;
     label: string;
@@ -57,17 +58,34 @@ export const FilterCarouse = ({
         className="w-full px-12"
       >
         <CarouselContent className="-ml-3">
-          <CarouselItem className="pl-3 basis-auto">
-            <Badge
-              variant={!value ? "default" : "secondary"}
-              className="rounded-lg px-3 py-1 cursor-pointer whitespace-nowrap text-sm"
+          {isLoading &&
+            Array.from({ length: 21 }).map((_, i) => (
+              <CarouselItem key={i} className="pl-3 basis-auto">
+                <Skeleton className="rounded-lg px-3 py-1 h-full text-sm w-[100px] font-semibold">
+                  &nbsp;
+                </Skeleton>
+              </CarouselItem>
+            ))}
+          {!isLoading && (
+            <CarouselItem
+              className="pl-3 basis-auto"
+              onClick={() => onSelect(null)}
             >
-              All
-            </Badge>
-          </CarouselItem>
+              <Badge
+                variant={!value ? "default" : "secondary"}
+                className="rounded-lg px-3 py-1 cursor-pointer whitespace-nowrap text-sm"
+              >
+                All
+              </Badge>
+            </CarouselItem>
+          )}
           {!isLoading &&
             data.map((item) => (
-              <CarouselItem key={item.value} className="pl-3 basis-auto">
+              <CarouselItem
+                key={item.value}
+                className="pl-3 basis-auto"
+                onClick={() => onSelect(item.value)}
+              >
                 <Badge
                   variant={value === item.value ? "default" : "secondary"}
                   className="rounded-lg px-3 py-1 cursor-pointer whitespace-nowrap text-sm"

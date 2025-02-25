@@ -34,7 +34,7 @@ export const StudioSidebarHeader = () => {
           <Link href="/user/current">
             <UserAvatar
               imageUrl={imageUrl}
-              name={fullName ?? "User"}
+              name={fullName || "User"}
               size="xs"
             />
             <span className="text-sm">Your profile</span>
@@ -49,7 +49,7 @@ export const StudioSidebarHeader = () => {
       <Link href="/user/current">
         <UserAvatar
           imageUrl={imageUrl}
-          name={fullName ?? "User"}
+          name={fullName || "User"}
           className="size-[112px] hover:opacity-80 transition-opacity"
         />
       </Link>

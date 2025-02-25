@@ -29,7 +29,11 @@ export const StudioUploadModal = () => {
           create.reset();
         }}
       >
-        <StudioUploader />
+        {!create.data ? (
+          <Loader2Icon className="animate-spin" />
+        ) : (
+          <StudioUploader endpoint={create.data.url} onSuccess={() => {}} />
+        )}
       </ResponsiveModal>
       <Button
         variant="secondary"

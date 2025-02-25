@@ -6,9 +6,12 @@ import { trpc } from "@/trpc/client";
 import { Loader2Icon, PlusIcon } from "lucide-react";
 import { toast } from "sonner";
 import { StudioUploader } from "./studio-uploader";
+import { useRouter } from "next/navigation";
 
 export const StudioUploadModal = () => {
   const utils = trpc.useUtils();
+  const router = useRouter();
+
   const create = trpc.videos.create.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
@@ -19,6 +22,15 @@ export const StudioUploadModal = () => {
   });
 
   const { isPending } = create;
+
+  const onSuccess = () => {
+    if (!create.data) {
+      return;
+    }
+
+    create.reset();
+    router.push(`/studio/videos/${create.data.video.id}`);
+  };
 
   return (
     <>
@@ -32,7 +44,7 @@ export const StudioUploadModal = () => {
         {!create.data ? (
           <Loader2Icon className="animate-spin" />
         ) : (
-          <StudioUploader endpoint={create.data.url} onSuccess={() => {}} />
+          <StudioUploader endpoint={create.data.url} onSuccess={onSuccess} />
         )}
       </ResponsiveModal>
       <Button

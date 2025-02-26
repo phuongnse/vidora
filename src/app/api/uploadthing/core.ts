@@ -1,42 +1,86 @@
+import { db } from "@/db";
+import { users, videos } from "@/db/schema";
+import { auth } from "@clerk/nextjs/server";
+import { and, eq } from "drizzle-orm";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
+import { UploadThingError, UTApi } from "uploadthing/server";
+import { z } from "zod";
 
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
-
-// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
-  // Define as many FileRoutes as you like, each with a unique routeSlug
-  imageUploader: f({
+  thumbnailUploader: f({
     image: {
-      /**
-       * For full list of options and defaults, see the File Route API reference
-       * @see https://docs.uploadthing.com/file-routes#route-config
-       */
       maxFileSize: "4MB",
       maxFileCount: 1,
     },
   })
-    // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
-      // This code runs on your server before upload
-      const user = await auth(req);
+    .input(z.object({ videoId: z.string().uuid() }))
+    .middleware(async ({ input }) => {
+      const { userId: clerkId } = await auth();
 
-      // If you throw, the user will not be able to upload
-      if (!user) throw new UploadThingError("Unauthorized");
+      if (!clerkId) {
+        throw new UploadThingError("Unauthorized");
+      }
 
-      // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId: user.id };
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkId, clerkId));
+
+      if (!user) {
+        throw new UploadThingError("Unauthorized");
+      }
+
+      const { id: userId } = user;
+      const { videoId } = input;
+
+      const [video] = await db
+        .select({
+          thumbnailKey: videos.thumbnailKey,
+        })
+        .from(videos)
+        .where(and(eq(videos.id, videoId), eq(videos.userId, userId)));
+
+      if (!video) {
+        throw new UploadThingError("Bad request");
+      }
+
+      const { thumbnailKey } = video;
+
+      if (thumbnailKey) {
+        const utApi = new UTApi();
+
+        await utApi.deleteFiles(thumbnailKey);
+
+        await db
+          .update(videos)
+          .set({
+            thumbnailUrl: null,
+            thumbnailKey: null,
+          })
+          .where(and(eq(videos.id, videoId), eq(videos.userId, userId)));
+      }
+
+      return { user, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
+      const {
+        user: { id: userId },
+        videoId,
+      } = metadata;
 
-      console.log("file url", file.url);
+      const { ufsUrl, key } = file;
 
-      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId };
+      await db
+        .update(videos)
+        .set({
+          thumbnailUrl: ufsUrl,
+          thumbnailKey: key,
+        })
+        .where(and(eq(videos.id, videoId), eq(videos.userId, userId)));
+
+      return { uploadedBy: userId };
     }),
 } satisfies FileRouter;
 

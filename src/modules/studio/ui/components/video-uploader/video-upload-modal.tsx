@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
 import { Loader2Icon, PlusIcon } from "lucide-react";
 import { toast } from "sonner";
-import { StudioUploader } from "./studio-uploader";
+import { VideoUploader } from ".";
 import { useRouter } from "next/navigation";
 
-export const StudioUploadModal = () => {
+export const VideoUploadModal = () => {
   const utils = trpc.useUtils();
   const router = useRouter();
 
@@ -44,7 +44,7 @@ export const StudioUploadModal = () => {
         {!create.data ? (
           <Loader2Icon className="animate-spin" />
         ) : (
-          <StudioUploader endpoint={create.data.url} onSuccess={onSuccess} />
+          <VideoUploader endpoint={create.data.url} onSuccess={onSuccess} />
         )}
       </ResponsiveModal>
       <Button

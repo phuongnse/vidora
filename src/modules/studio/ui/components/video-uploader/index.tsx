@@ -7,17 +7,14 @@ import MuxUploader, {
 } from "@mux/mux-uploader-react";
 import { UploadCloud } from "lucide-react";
 
-interface StudioUploaderProps {
+interface VideoUploaderProps {
   endpoint?: string | null;
   onSuccess: () => void;
 }
 
 const VIDEO_UPLOADER_ID = "video-uploader";
 
-export const StudioUploader = ({
-  endpoint,
-  onSuccess,
-}: StudioUploaderProps) => {
+export const VideoUploader = ({ endpoint, onSuccess }: VideoUploaderProps) => {
   return (
     <div>
       <MuxUploader

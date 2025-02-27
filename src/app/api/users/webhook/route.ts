@@ -68,6 +68,7 @@ export async function POST(req: Request) {
       .set({
         name: `${first_name} ${last_name}`,
         imageUrl: image_url,
+        updatedAt: new Date(),
       })
       .where(eq(users.clerkId, id!));
   }

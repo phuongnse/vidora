@@ -58,6 +58,7 @@ export const ourFileRouter = {
           .set({
             thumbnailUrl: null,
             thumbnailKey: null,
+            updatedAt: new Date(),
           })
           .where(and(eq(videos.id, videoId), eq(videos.userId, userId)));
       }
@@ -77,6 +78,7 @@ export const ourFileRouter = {
         .set({
           thumbnailUrl: ufsUrl,
           thumbnailKey: key,
+          updatedAt: new Date(),
         })
         .where(and(eq(videos.id, videoId), eq(videos.userId, userId)));
 

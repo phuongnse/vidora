@@ -67,6 +67,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
   const {
     muxPlaybackId: playbackId,
+    muxTrackId: trackId,
     muxStatus: status,
     muxTrackStatus: trackStatus,
     thumbnailUrl,
@@ -97,6 +98,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     },
   });
 
+  const { isPending: updateIsPending } = update;
+
   const remove = trpc.videos.remove.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
@@ -116,6 +119,32 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
       toast.error("Something went wrong.");
     },
   });
+
+  const generateTitle = trpc.videos.generateTitle.useMutation({
+    onSuccess: () => {
+      toast.info("Video title generating...", {
+        description: "This may take some time.",
+      });
+    },
+    onError: () => {
+      toast.error("Something went wrong.");
+    },
+  });
+
+  const { isPending: generateTitleIsPending } = generateTitle;
+
+  const generateDescription = trpc.videos.generateDescription.useMutation({
+    onSuccess: () => {
+      toast.info("Video description generating...", {
+        description: "This may take some time.",
+      });
+    },
+    onError: () => {
+      toast.error("Something went wrong.");
+    },
+  });
+
+  const { isPending: generateDescriptionIsPending } = generateDescription;
 
   const onSubmit = (data: z.infer<typeof videoUpdateSchema>) => {
     update.mutate(data);
@@ -143,12 +172,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
               </p>
             </div>
             <div className="flex items-center gap-x-2">
-              <Button
-                className="w-16"
-                type="submit"
-                disabled={update.isPending}
-              >
-                {update.isPending ? (
+              <Button className="w-16" type="submit" disabled={updateIsPending}>
+                {updateIsPending ? (
                   <Loader2Icon className="animate-spin" />
                 ) : (
                   "Save"
@@ -178,7 +203,25 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>
+                      <div className="flex items-center gap-x-2">
+                        Title
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          type="button"
+                          className="rounded-full size-6 [&_svg]:size-3"
+                          onClick={() => generateTitle.mutate({ id: videoId })}
+                          disabled={!trackId || generateTitleIsPending}
+                        >
+                          {generateTitleIsPending ? (
+                            <Loader2Icon className="animate-spin" />
+                          ) : (
+                            <SparklesIcon />
+                          )}
+                        </Button>
+                      </div>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -194,7 +237,27 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>
+                      <div className="flex items-center gap-x-2">
+                        Description
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          type="button"
+                          className="rounded-full size-6 [&_svg]:size-3"
+                          onClick={() =>
+                            generateDescription.mutate({ id: videoId })
+                          }
+                          disabled={!trackId || generateDescriptionIsPending}
+                        >
+                          {generateDescriptionIsPending ? (
+                            <Loader2Icon className="animate-spin" />
+                          ) : (
+                            <SparklesIcon />
+                          )}
+                        </Button>
+                      </div>
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}

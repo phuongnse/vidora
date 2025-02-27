@@ -58,6 +58,7 @@ export const POST = async (request: Request) => {
         .set({
           muxAssetId: data.id,
           muxStatus: data.status,
+          updatedAt: new Date(),
         })
         .where(eq(videos.muxUploadId, uploadId));
 
@@ -75,6 +76,7 @@ export const POST = async (request: Request) => {
         .update(videos)
         .set({
           muxStatus: data.status,
+          updatedAt: new Date(),
         })
         .where(eq(videos.muxUploadId, uploadId));
 
@@ -129,6 +131,7 @@ export const POST = async (request: Request) => {
           previewUrl,
           previewKey,
           duration: duration ? Math.round(duration * 1000) : 0,
+          updatedAt: new Date(),
         })
         .where(eq(videos.muxUploadId, uploadId));
 
@@ -161,6 +164,7 @@ export const POST = async (request: Request) => {
         .set({
           muxTrackId: data.id,
           muxTrackStatus: data.status,
+          updatedAt: new Date(),
         })
         .where(eq(videos.muxAssetId, assetId));
 

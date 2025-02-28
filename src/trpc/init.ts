@@ -32,6 +32,8 @@ export const baseProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(async (opts) => {
   const { ctx } = opts;
 
+  console.log("ctx", ctx);
+
   if (!ctx.clerkId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -45,6 +47,8 @@ export const protectedProcedure = t.procedure.use(async (opts) => {
   if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  console.log("user", user);
 
   const { success } = await ratelimit.limit(user.id);
 

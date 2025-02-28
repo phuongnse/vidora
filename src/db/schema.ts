@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import { createUpdateSchema } from "drizzle-zod";
 
 export const users = pgTable(
   "users",
@@ -27,6 +27,7 @@ export const users = pgTable(
 export const userRelations = relations(users, ({ many }) => ({
   videos: many(videos),
   views: many(views),
+  reactions: many(reactions),
 }));
 
 export const categories = pgTable(
@@ -78,7 +79,6 @@ export const videos = pgTable("videos", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const videoInsertSchema = createInsertSchema(videos);
 export const videoUpdateSchema = createUpdateSchema(videos);
 
 export const videoRelations = relations(videos, ({ one, many }) => ({
@@ -91,6 +91,7 @@ export const videoRelations = relations(videos, ({ one, many }) => ({
     references: [categories.id],
   }),
   views: many(views),
+  reactions: many(reactions),
 }));
 
 export const views = pgTable(
@@ -115,9 +116,6 @@ export const views = pgTable(
   ]
 );
 
-export const viewInsertSchema = createInsertSchema(views);
-export const viewUpdateSchema = createUpdateSchema(views);
-
 export const viewRelations = relations(views, ({ one }) => ({
   users: one(users, {
     fields: [views.userId],
@@ -125,6 +123,42 @@ export const viewRelations = relations(views, ({ one }) => ({
   }),
   videos: one(videos, {
     fields: [views.videoId],
+    references: [videos.id],
+  }),
+}));
+
+export const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
+
+export const reactions = pgTable(
+  "reactions",
+  {
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    videoId: uuid("video_id")
+      .references(() => videos.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    type: reactionType("type").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: "reactions_pk",
+      columns: [t.userId, t.videoId],
+    }),
+  ]
+);
+
+export const reactionRelations = relations(reactions, ({ one }) => ({
+  users: one(users, {
+    fields: [reactions.userId],
+    references: [users.id],
+  }),
+  videos: one(videos, {
+    fields: [reactions.videoId],
     references: [videos.id],
   }),
 }));

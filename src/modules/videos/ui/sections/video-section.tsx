@@ -19,7 +19,7 @@ const VideoSectionSuspense = ({ id }: VideoSectionProps) => {
   const [video] = trpc.videos.getOne.useSuspenseQuery({ id });
   const { muxStatus, muxPlaybackId, thumbnailUrl } = video;
 
-  const createView = trpc.views.create.useMutation({
+  const view = trpc.videos.view.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ id });
     },
@@ -30,7 +30,7 @@ const VideoSectionSuspense = ({ id }: VideoSectionProps) => {
       return;
     }
 
-    createView.mutate({ videoId: id });
+    view.mutate({ videoId: id });
   };
 
   return (

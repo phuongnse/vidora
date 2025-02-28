@@ -11,7 +11,17 @@ interface VideoTopRowProps {
 }
 
 export const VideoTopRow = ({ video }: VideoTopRowProps) => {
-  const { id, title, description, user, views, createdAt } = video;
+  const {
+    id,
+    title,
+    description,
+    user,
+    views,
+    createdAt,
+    likes,
+    dislikes,
+    userReaction,
+  } = video;
 
   const compactViews = useMemo(() => {
     return Intl.NumberFormat("en", {
@@ -39,7 +49,12 @@ export const VideoTopRow = ({ video }: VideoTopRowProps) => {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <VideoOwner user={user} videoId={id} />
         <div className="flex overflow-x-auto sm:min-w-[calc(50% - 6px)] sm:justify-end sm:overflow-visible pb-2 -mb-2 sm:pb-0 sm:mb-0 gap-2">
-          <VideoReactions />
+          <VideoReactions
+            id={id}
+            likes={likes}
+            dislikes={dislikes}
+            userReaction={userReaction}
+          />
           <VideoMenu id={id} variant="secondary" />
         </div>
       </div>

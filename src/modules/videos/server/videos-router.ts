@@ -7,6 +7,9 @@ import { generateTitle } from "./procedures/generate-title";
 import { generateDescription } from "./procedures/generate-description";
 import { generateThumbnail } from "./procedures/generate-thumbnail";
 import { getOne } from "./procedures/get-one";
+import { view } from "./procedures/view";
+import { like } from "./procedures/like";
+import { dislike } from "./procedures/dislike";
 
 export const videosRouter = createTRPCRouter({
   create,
@@ -17,4 +20,7 @@ export const videosRouter = createTRPCRouter({
   generateDescription,
   generateThumbnail,
   getOne,
+  view,
+  like,
+  dislike,
 });

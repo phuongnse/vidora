@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const create = protectedProcedure
+export const view = protectedProcedure
   .input(z.object({ videoId: z.string().uuid() }))
   .mutation(async ({ ctx, input }) => {
     const {

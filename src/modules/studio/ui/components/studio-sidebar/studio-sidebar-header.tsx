@@ -5,7 +5,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserAvatar } from "@/components/user-avatar";
+import { UserAvatar } from "@/modules/users/ui/components/user-avatar";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 

@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { users, videos } from "@/db/schema";
+import { users, videos, views } from "@/db/schema";
 import { baseProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { eq, getTableColumns } from "drizzle-orm";
@@ -16,6 +16,7 @@ export const getOne = baseProcedure
         user: {
           ...getTableColumns(users),
         },
+        views: db.$count(views, eq(views.videoId, id)),
       })
       .from(videos)
       .innerJoin(users, eq(videos.userId, users.id))

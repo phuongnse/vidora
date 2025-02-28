@@ -11,19 +11,19 @@ interface VideoTopRowProps {
 }
 
 export const VideoTopRow = ({ video }: VideoTopRowProps) => {
-  const { id, title, description, user, createdAt } = video;
+  const { id, title, description, user, views, createdAt } = video;
 
   const compactViews = useMemo(() => {
     return Intl.NumberFormat("en", {
       notation: "compact",
-    }).format(1000);
-  }, []);
+    }).format(views);
+  }, [views]);
 
   const expandedViews = useMemo(() => {
     return Intl.NumberFormat("en", {
       notation: "standard",
-    }).format(1000);
-  }, []);
+    }).format(views);
+  }, [views]);
 
   const compactDate = useMemo(() => {
     return formatDistanceToNow(createdAt, { addSuffix: true });

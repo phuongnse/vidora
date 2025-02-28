@@ -5,6 +5,7 @@ import { remove } from "./procedures/remove";
 import { restoreThumbnail } from "./procedures/restore-thumbnail";
 import { generateTitle } from "./procedures/generate-title";
 import { generateDescription } from "./procedures/generate-description";
+import { generateThumbnail } from "./procedures/generate-thumbnail";
 
 export const videosRouter = createTRPCRouter({
   create,
@@ -13,4 +14,5 @@ export const videosRouter = createTRPCRouter({
   restoreThumbnail,
   generateTitle,
   generateDescription,
+  generateThumbnail,
 });

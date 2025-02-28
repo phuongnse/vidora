@@ -42,8 +42,6 @@ export const { POST } = serve(async (context) => {
 
     const transcript = response.text();
 
-    // The transcript takes time to process and is not available immediately.
-    // Throw an error to retry several times in this step.
     if (!transcript) {
       throw new Error("Bad request.");
     }
